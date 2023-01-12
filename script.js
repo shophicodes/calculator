@@ -23,7 +23,9 @@ function operate(x, y, operator) {
             result = multiply(x, y);
             break;
         case '/':
-            if(y === 0) break;
+            if(y === 0) {
+                return "Error: Division by zero";
+            }
             result = divide(x, y);
             break;
     }
@@ -31,10 +33,12 @@ function operate(x, y, operator) {
 }
 
 function formatResult() {
-    firstNumber = isItInteger(firstNumber) ? parseInt(firstNumber) : parseFloat(firstNumber);
-    secondNumber = isItInteger(secondNumber) ? parseInt(secondNumber) : parseFloat(secondNumber);
-    result = operate(firstNumber, secondNumber, operation);
-    firstNumber = result;
+    if(secondNumber !== "") {
+        firstNumber = isItInteger(firstNumber) ? parseInt(firstNumber) : parseFloat(firstNumber);
+        secondNumber = isItInteger(secondNumber) ? parseInt(secondNumber) : parseFloat(secondNumber);
+        result = operate(firstNumber, secondNumber, operation);
+        firstNumber = result;
+    }
     output.textContent = firstNumber;
 }
 
@@ -58,15 +62,13 @@ actions.forEach(action => action.addEventListener("click", () => {
                 secondNumber += action.textContent;
                 output.textContent = secondNumber;
             }
-            console.log(firstNumber);
-            console.log(secondNumber);
             break;
         case "+":
         case "-":
         case "*":
         case "/":
+            if(firstNumber === "") break;
             if(!firstIteration && secondNumber !== "") {
-                console.log(secondNumber === "");
                 formatResult();
             }
             else {
@@ -74,12 +76,44 @@ actions.forEach(action => action.addEventListener("click", () => {
             }
             operation = action.textContent;
             secondNumber = "";
-            console.log(operation);
             break;
         case "=":
+            if(firstNumber === "") break;
             formatResult();
             firstIteration = true;
             secondNumber = "";
+            break;
+        case "C":
+            firstNumber = "";
+            secondNumber = "";
+            operation = "";
+            result = 0;
+            firstIteration = true;
+            output.textContent = "0";
+            break;
+        case "DEL":
+            if(firstIteration) {
+                if(firstNumber === "") break;
+                else if(firstNumber.length == 1) {
+                    firstNumber = "";
+                    output.textContent = "0";
+                }
+                else {
+                    firstNumber = firstNumber.slice(0, -1); 
+                    output.textContent = output.textContent.slice(0, -1);
+                }
+            }
+            else {
+                if(secondNumber === "") break;
+                else if(secondNumber.length == 1) {
+                    secondNumber = "";
+                    output.textContent = "0";
+                }
+                else {
+                    secondNumber = secondNumber.slice(0, -1);
+                    output.textContent = output.textContent.slice(0, -1);
+                }
+            }
             break;
     }
 }));
