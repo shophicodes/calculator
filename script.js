@@ -115,6 +115,26 @@ actions.forEach(action => action.addEventListener("click", () => {
                 }
             }
             break;
+        case ".":
+            if(firstIteration) {
+                if(firstNumber.includes(".")) {
+                    break;
+                }
+                else {
+                    firstNumber += ".";
+                    output.textContent += ".";
+                }
+            }
+            else {
+                if(secondNumber.includes(".")) {
+                    break;
+                }
+                else {
+                    secondNumber += ".";
+                    output.textContent += ".";
+                }
+            }
+            break;
     }
 }));
 
