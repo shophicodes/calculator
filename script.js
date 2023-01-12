@@ -30,6 +30,14 @@ function operate(x, y, operator) {
     return result;
 }
 
+function formatResult() {
+    firstNumber = isItInteger(firstNumber) ? parseInt(firstNumber) : parseFloat(firstNumber);
+    secondNumber = isItInteger(secondNumber) ? parseInt(secondNumber) : parseFloat(secondNumber);
+    result = operate(firstNumber, secondNumber, operation);
+    firstNumber = result;
+    output.textContent = firstNumber;
+}
+
 actions.forEach(action => action.addEventListener("click", () => {
     switch(action.textContent) {
         case "0":
@@ -57,12 +65,9 @@ actions.forEach(action => action.addEventListener("click", () => {
         case "-":
         case "*":
         case "/":
-            if(!firstIteration) {
-                firstNumber = isItInteger(firstNumber) ? parseInt(firstNumber) : parseFloat(firstNumber);
-                secondNumber = isItInteger(secondNumber) ? parseInt(secondNumber) : parseFloat(secondNumber);
-                result = operate(firstNumber, secondNumber, operation);
-                firstNumber = result;
-                output.textContent = firstNumber;
+            if(!firstIteration && secondNumber !== "") {
+                console.log(secondNumber === "");
+                formatResult();
             }
             else {
                 firstIteration = false;
@@ -72,11 +77,7 @@ actions.forEach(action => action.addEventListener("click", () => {
             console.log(operation);
             break;
         case "=":
-            firstNumber = isItInteger(firstNumber) ? parseInt(firstNumber) : parseFloat(firstNumber);
-            secondNumber = isItInteger(secondNumber) ? parseInt(secondNumber) : parseFloat(secondNumber);
-            result = operate(firstNumber, secondNumber, operation);
-            firstNumber = result;
-            output.textContent = firstNumber;
+            formatResult();
             firstIteration = true;
             secondNumber = "";
             break;
