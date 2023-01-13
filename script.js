@@ -43,7 +43,7 @@ function formatResult() {
         parseFloat(secondNumber)
         
         result = operate(firstNumber, secondNumber, operation);
-        firstNumber = result;
+        firstNumber = !isItInteger(result) && !isNaN(result) ? result.toFixed(8) : result;
     }
     output.textContent = firstNumber;
     /* when two numbers were already specified after selecting an operation,
@@ -100,7 +100,6 @@ actions.forEach(action => action.addEventListener("click", () => {
         case "9":
             if(firstNumberForInput) {
                 firstNumber += action.textContent;
-                console.log(firstNumber);
                 output.textContent = firstNumber;
             }      
             else {
