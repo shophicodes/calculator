@@ -7,7 +7,7 @@ let isItInteger = n => n - Math.round(n) == 0 ? true : false;
 let output = document.querySelector("#output");
 let actions = document.querySelectorAll(".btn")
 let firstNumber = "", secondNumber = "", operation = "";
-let firstIteration = true;
+let firstNumberForInput = true;
 let result = 0;
 
 function operate(x, y, operator) {
@@ -34,17 +34,61 @@ function operate(x, y, operator) {
 
 function formatResult() {
     if(secondNumber !== "") {
-        firstNumber = isItInteger(firstNumber) ? parseInt(firstNumber) : parseFloat(firstNumber);
-        secondNumber = isItInteger(secondNumber) ? parseInt(secondNumber) : parseFloat(secondNumber);
+        firstNumber = isItInteger(firstNumber) ? 
+        parseInt(firstNumber) : 
+        parseFloat(firstNumber);
+
+        secondNumber = isItInteger(secondNumber) ? 
+        parseInt(secondNumber) : 
+        parseFloat(secondNumber)
+        
         result = operate(firstNumber, secondNumber, operation);
         firstNumber = result;
     }
     output.textContent = firstNumber;
+    /* when two numbers were already specified after selecting an operation,
+       result is calculated with previously given operation and is assigned to first number */
+}
+
+function resetcalculator() {
+    firstNumber = "";
+    secondNumber = "";
+    operation = "";
+    result = 0;
+    firstNumberForInput = true;
+    output.textContent = "0";
+}
+
+function deleteDigit(num) {
+    if(num === "") return num;
+    else if(num.length == 1) {
+        num = "";
+        output.textContent = "0";
+    }
+    else {
+        num = num.slice(0, -1); 
+        output.textContent = output.textContent.slice(0, -1);
+    }
+    return num;
+}
+
+function addDecimalSpace(num) {
+    if(num.includes(".")) {
+        return num;
+    }
+    else {
+        num += ".";
+        console.log(num);
+        output.textContent += ".";
+    }
+    return num; 
+    // added return so the decimal space doesn't get removed after adding another digit
 }
 
 actions.forEach(action => action.addEventListener("click", () => {
     switch(action.textContent) {
         case "0":
+            if(output.textContent === "0") break;
         case "1":
         case "2":
         case "3":
@@ -54,8 +98,9 @@ actions.forEach(action => action.addEventListener("click", () => {
         case "7":
         case "8":
         case "9":
-            if(firstIteration) {
+            if(firstNumberForInput) {
                 firstNumber += action.textContent;
+                console.log(firstNumber);
                 output.textContent = firstNumber;
             }      
             else {
@@ -68,11 +113,11 @@ actions.forEach(action => action.addEventListener("click", () => {
         case "*":
         case "/":
             if(firstNumber === "") break;
-            if(!firstIteration && secondNumber !== "") {
+            if(!firstNumberForInput && secondNumber !== "") {
                 formatResult();
             }
             else {
-                firstIteration = false;
+                firstNumberForInput = false;
             }
             operation = action.textContent;
             secondNumber = "";
@@ -80,76 +125,27 @@ actions.forEach(action => action.addEventListener("click", () => {
         case "=":
             if(firstNumber === "") break;
             formatResult();
-            firstIteration = true;
+            firstNumberForInput = true;
             secondNumber = "";
             break;
         case "C":
-            firstNumber = "";
-            secondNumber = "";
-            operation = "";
-            result = 0;
-            firstIteration = true;
-            output.textContent = "0";
+            resetcalculator();
             break;
         case "DEL":
-            if(firstIteration) {
-                if(firstNumber === "") break;
-                else if(firstNumber.length == 1) {
-                    firstNumber = "";
-                    output.textContent = "0";
-                }
-                else {
-                    firstNumber = firstNumber.slice(0, -1); 
-                    output.textContent = output.textContent.slice(0, -1);
-                }
+            if(firstNumberForInput) {
+                firstNumber = deleteDigit(firstNumber);
             }
             else {
-                if(secondNumber === "") break;
-                else if(secondNumber.length == 1) {
-                    secondNumber = "";
-                    output.textContent = "0";
-                }
-                else {
-                    secondNumber = secondNumber.slice(0, -1);
-                    output.textContent = output.textContent.slice(0, -1);
-                }
+                secondNumber = deleteDigit(secondNumber);
             }
             break;
         case ".":
-            if(firstIteration) {
-                if(firstNumber.includes(".")) {
-                    break;
-                }
-                else {
-                    firstNumber += ".";
-                    output.textContent += ".";
-                }
-            }
+            if(firstNumberForInput) {
+                firstNumber = addDecimalSpace(firstNumber);
+            } 
             else {
-                if(secondNumber.includes(".")) {
-                    break;
-                }
-                else {
-                    secondNumber += ".";
-                    output.textContent += ".";
-                }
+                secondNumber = addDecimalSpace(secondNumber);
             }
             break;
     }
 }));
-
-/*
-    add event when an calculator button (action) is pressed
-        use switch statement to determine what type of action is
-            in case of a digit (0-9)
-                add a digit to a number
-            in case of operations (+,-,*,/)
-                if first and second number and operator were already defined
-                    calculate those two numbers with specified operator
-                    display their result
-                otherwise, display operator instead
-        
-        at the end, add number to a display
-
-
-*/
